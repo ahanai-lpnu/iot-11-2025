@@ -100,8 +100,19 @@ class FileManager:
                 break
         
         if not found:
-            print(f"Додаю новий предмет: {subject}")
-            body.append([subject, str(grade)])
+            try:
+                row = next(r for r in body if r[0] == subject)
+
+                try:
+                    old_grade = int(row[1])
+                except ValueError:
+                    old_grade = 0
+            
+                if grade <= old_grade:
+                    raise GradeError(f"Нова оцінка ({grade}) не вища за стару ({old_grade})!")
+                else:
+                    print(f"Оновлюю оцінку {old_grade} -> {grade}")
+                    row[1] = str(grade)
 
         body.sort(key=lambda x: int(x[1]), reverse=True)
         
